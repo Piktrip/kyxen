@@ -90,7 +90,9 @@ class KyxenDaemon:
         threading.Thread(target=self._config_watch, daemon=True).start()
 
         gkeys_hidraw = self._keyboard.paths.hidraw_gkeys
-        if gkeys_hidraw:
+        if self._keyboard.GKEYS_VIA_HIDPP:
+            print('[kyxen] G-key detection: HID++ GKEY notifications')
+        elif gkeys_hidraw:
             threading.Thread(target=self._gkey_hid_loop, daemon=True).start()
             print(f'[kyxen] G-key detection: boot-protocol on {gkeys_hidraw}')
         else:
@@ -113,15 +115,25 @@ class KyxenDaemon:
 
         # Start lighting engine and apply the active profile's lighting config.
         if hidraw:
-            self._lighting_engine = LightingEngine(
-                hidraw, lambda: not self._running,
-                key_ids=self._keyboard.get_key_ids() or None,
-            )
-            threading.Thread(target=self._lighting_engine.run, daemon=True).start()
-            if self._active_profile in self._profiles:
-                self._lighting_engine.set_config(
-                    self._profiles[self._active_profile].lighting
+            from .onboard_profiles import FEATURE_PER_KEY_LIGHTING
+            try:
+                perkey_idx = self._keyboard.feature_index(FEATURE_PER_KEY_LIGHTING)
+            except Exception as e:
+                perkey_idx = None
+                print(f'[kyxen] WARNING: per-key lighting unavailable: {e}')
+            if perkey_idx is not None:
+                print(f'[kyxen] lighting: 0x8081=0x{perkey_idx:02x} on {hidraw}')
+                self._lighting_engine = LightingEngine(
+                    hidraw, lambda: not self._running,
+                    key_ids=self._keyboard.get_key_ids() or None,
+                    feature_idx=perkey_idx,
+                    init_packets=self._keyboard.lighting_init_packets(),
                 )
+                threading.Thread(target=self._lighting_engine.run, daemon=True).start()
+                if self._active_profile in self._profiles:
+                    self._lighting_engine.set_config(
+                        self._profiles[self._active_profile].lighting
+                    )
         self._push_mkey_bitmask(self._active_mkey_for(self._active_profile))
         print(f'[kyxen] active profile: {self._active_profile}')
 
@@ -224,6 +236,8 @@ class KyxenDaemon:
             on_mkey=self._handle_mkey,
             stop_flag=lambda: not self._running,
             led_queue=self._mkey_led_queue,
+            on_gkey_press=self._handle_gkey if self._keyboard.GKEYS_VIA_HIDPP else None,
+            on_gkey_release=self._handle_gkey_release if self._keyboard.GKEYS_VIA_HIDPP else None,
         )
 
     def _handle_mkey(self, mkey_idx: int) -> None:
