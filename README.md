@@ -3,10 +3,9 @@
 Open-source Logitech G-key macro manager for Linux.
 
 > **This is an actively maintained fork of [quinn-stack/kyxen](https://github.com/quinn-stack/kyxen).**
-> Upstream has been quiet since May 2026, so development continues here in the
-> meantime. Everything is meant to go back upstream: see
-> [quinn-stack/kyxen#5](https://github.com/quinn-stack/kyxen/pull/5) and
-> [quinn-stack/kyxen#6](https://github.com/quinn-stack/kyxen/pull/6).
+> Upstream has been quiet since May 2026
+> ([quinn-stack/kyxen#7](https://github.com/quinn-stack/kyxen/issues/7)), so
+> development continues here in the meantime.
 >
 > Added in this fork:
 > - **Logitech G915** (USB cable) — G-keys, M-keys and per-key lighting, without writing to the keyboard's flash
