@@ -2,6 +2,19 @@
 
 Open-source Logitech G-key macro manager for Linux.
 
+> **This is an actively maintained fork of [quinn-stack/kyxen](https://github.com/quinn-stack/kyxen).**
+> Upstream has been quiet since May 2026, so development continues here in the
+> meantime. Everything is meant to go back upstream: see
+> [quinn-stack/kyxen#5](https://github.com/quinn-stack/kyxen/pull/5) and
+> [quinn-stack/kyxen#6](https://github.com/quinn-stack/kyxen/pull/6).
+>
+> Added in this fork:
+> - **Logitech G915** (USB cable) — G-keys, M-keys and per-key lighting, without writing to the keyboard's flash
+> - HID++ feature indices and onboard-profile sector size read from the keyboard instead of hardcoded
+> - Correct **German/Austrian** (`de`/`at`) layout for text macros, incl. AltGr characters, umlauts and dead keys
+>
+> Issues and PRs are welcome here.
+
 Gives you per-profile macros on your G-keys — type text, run commands, fire key
 combos, hold modifier keys, click mouse buttons, or repeat any action while the
 key is held. RGB lighting is set per-profile. No Windows software, no cloud
@@ -36,7 +49,7 @@ More models coming. PRs welcome — see [Adding keyboard support](#adding-keyboa
 ### From source (recommended for now)
 
 ```bash
-git clone https://github.com/quinn-stack/kyxen
+git clone https://github.com/Piktrip/kyxen
 cd kyxen
 pip install -e .
 ```
@@ -48,7 +61,7 @@ pip install -e .
 sudo pacman -S python-evdev python-pyside6
 
 # Clone and install
-git clone https://github.com/quinn-stack/kyxen
+git clone https://github.com/Piktrip/kyxen
 cd kyxen
 pip install --no-deps -e .
 ```
